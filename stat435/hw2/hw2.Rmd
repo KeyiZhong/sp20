@@ -1,0 +1,155 @@
+---
+title: "hw2"
+author: "Keyi Zhong"
+date: "4/24/2020"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+## 1.1
+```{r warning = FALSE}
+library(ISLR)
+data <- Auto
+data$origin <- factor(data$origin)
+lm.fit <- lm(mpg~.,data=data[-9])
+summary(lm.fit)$coefficients
+```
+One unit growth of cylinders will make 0.49 decrease in mpg, the t value is -1.526 so we should not reject the null hypothesis. One unit growth of displacement will make 0.02 increase in mpg, the t value is 2.647, so we should probabaly reject the null hypothesis if we want to make it strict. One unit growth of horsepower will make 0.017 decrease in mpg, the t value is -1.23, so we should not reject the null hypothesis. One unit growth of weight will make 0.0065 decrease in mpg, the t value is -9.9, so we should reject the null hypothesis. One unit growth of acceleration will make 0.09 increase in mpg, the t value is 0.815, so we should not reject the null hypothesis. One unit growth of year will make 0.75 increase in mpg, the t value is 14.7, so we should reject the null hypothesis. The difference in American cars and European cars is 2.63 mpg, and the t value is 4.643 so we can reject the null hypothesis. The difference in American cars and Japanese cars is 2.85 mpg, and the t value is 5.162 so we can reject the null hypothesis.
+
+## 1.2
+```{r}
+mean(lm.fit$residuals^2)
+```
+
+
+## 1.3
+```{r}
+predict(lm.fit,data.frame(cylinders=3,displacement=100,horsepower=85,weight=3000,acceleration=20,year=80,origin=factor(3)))
+```
+
+## 1.4
+```{r}
+lm.fit$coefficients["origin3"]
+```
+
+## 1.5
+```{r}
+10*lm.fit$coefficients["horsepower"]
+```
+
+## 2.1
+
+$x_{i1}=\left\{\begin{array}{ll}1\quad\text{if ith car is American}\\0\quad\text{if ith car is not American}\end{array}\right.$
+
+$x_{i2}=\left\{\begin{array}{ll}1\quad\text{if ith car is European}\\0\quad\text{if ith car is not European}\end{array}\right.$
+
+$y_i=\beta_0+\beta_1x_{i1}+\beta_1x_{i2}+\epsilon_i=\left\{\begin{array}{ll}\beta_0+\beta_1+\epsilon_i\quad\text{if ith car is American}\\\beta_0+\beta_2+\epsilon_i\quad\text{if ith car is European}\\\beta_0+\epsilon_i\quad\text{if ith car is Japanese}\end{array}\right.$
+
+```{r}
+jap.avg <-  mean(Auto$mpg[Auto$origin==3])
+us.avg <- mean(Auto$mpg[Auto$origin==1])
+eu.avg <- mean(Auto$mpg[Auto$origin==2])
+
+x1 <- rep(0,length(Auto))
+x1[which(Auto$origin==1)] <- 1
+x1[which(Auto$origin!=1)] <- 0
+
+x2 <- rep(0,length(Auto))
+x2[which(Auto$origin==2)] <- 1
+x2[which(Auto$origin!=2)] <- 0
+lm.fit2.1 <- lm(Auto$mpg~x1+x2)
+summary(lm.fit2.1)$coefficients
+```
+$\beta_0$ is the aaverage mpg for all Japanese car which is `r jap.avg`, $\beta_1$ is the difference in average mpg between Japanese and American Car which is `r us.avg - jap.avg`, $\beta_2$ is the difference in average mpg between Japanese and European Car which is `r eu.avg - jap.avg`.
+The predicted mpg for a Japanese car is `r jap.avg`, for an American car is `r us.avg`, and for an European car is `r eu.avg`
+
+## 2.2
+$x_{i1}=\left\{\begin{array}{ll}1\quad\text{if ith car is Japanese}\\0\quad\text{if ith car is not Japanese}\end{array}\right.$
+
+$x_{i2}=\left\{\begin{array}{ll}1\quad\text{if ith car is European}\\0\quad\text{if ith car is not European}\end{array}\right.$
+
+$y_i=\beta_0+\beta_1x_{i1}+\beta_1x_{i2}+\epsilon_i=\left\{\begin{array}{ll}\beta_0+\beta_1+\epsilon_i\quad\text{if ith car is Japanese}\\\beta_0+\beta_2+\epsilon_i\quad\text{if ith car is European}\\\beta_0+\epsilon_i\quad\text{if ith car is American}\end{array}\right.$
+
+```{r}
+jap.avg <-  mean(Auto$mpg[Auto$origin==3])
+us.avg <- mean(Auto$mpg[Auto$origin==1])
+eu.avg <- mean(Auto$mpg[Auto$origin==2])
+
+x1 <- rep(0,length(Auto))
+x1[which(Auto$origin==3)] <- 1
+x1[which(Auto$origin!=3)] <- 0
+
+x2 <- rep(0,length(Auto))
+x2[which(Auto$origin==2)] <- 1
+x2[which(Auto$origin!=2)] <- 0
+lm.fit2.2 <- lm(Auto$mpg~x1+x2)
+summary(lm.fit2.2)$coefficients
+```
+
+$\beta_0$ is the average mpg for all American car which is `r us.avg`, $\beta_1$ is the difference in average mpg between American and Japanese Car which is `r jap.avg - us.avg`, $\beta_2$ is the difference in average mpg between American and European Car which is `r eu.avg - us.avg`.
+The predicted mpg for a Japanese car is `r jap.avg`, for an American car is `r us.avg`, and for an European car is `r eu.avg`
+
+## 2.3
+$x_{i1}=\left\{\begin{array}{ll}1\quad\text{if ith car is Japanese}\\-1\quad\text{if ith car is not Japanese}\end{array}\right.$
+
+$x_{i2}=\left\{\begin{array}{ll}1\quad\text{if ith car is European}\\-1\quad\text{if ith car is not European}\end{array}\right.$
+
+$y_i=\beta_0+\beta_1x_{i1}+\beta_1x_{i2}+\epsilon_i=\left\{\begin{array}{ll}\beta_0+\beta_1-\beta_2+\epsilon_i\quad\text{if ith car is Japanese}\\\beta_0-\beta_1+\beta_2+\epsilon_i\quad\text{if ith car is European}\\\beta_0-\beta_1-\beta_2+\epsilon_i\quad\text{if ith car is American}\end{array}\right.$
+
+```{r}
+x1 <- rep(0,length(Auto))
+x1[which(Auto$origin==3)] <- 1
+x1[which(Auto$origin!=3)] <- -1
+
+x2 <- rep(0,length(Auto))
+x2[which(Auto$origin==2)] <- 1
+x2[which(Auto$origin!=2)] <- -1
+lm.fit2.3 <- lm(Auto$mpg~x1+x2)
+summary(lm.fit2.3)$coefficients
+beta0 <- lm.fit2.3$coefficients[1]
+beta1 <- lm.fit2.3$coefficients[2]
+beta2 <- lm.fit2.3$coefficients[3]
+```
+The predicted mpg for a Japanese car is `r beta0+beta1-beta2`, for an American car is `r beta0-beta1-beta2`, and for an European car is `r beta0-beta1+beta2`
+
+## 2.4
+```{r}
+origin <- Auto$origin
+mpg <- Auto$mpg
+origin <- replace(origin,which(origin==3),0)
+lm.fit2.4 <- lm(mpg~origin)
+summary(lm.fit2.4)$coefficients
+```
+$x_{i}=\left\{\begin{array}{ll}0\quad\text{if ith car is Japanese}\\1\quad\text{if ith car is American}\\2\quad\text{if ith car is European}\end{array}\right.$
+
+$y_i=\beta_0+\beta_1x_{i}+\epsilon_i=\left\{\begin{array}{ll}\beta_0+\epsilon_i\quad\text{if ith car is Japanese}\\\beta_0+\beta_1+\epsilon_i\quad\text{if ith car is European}\\\beta_0+2\beta_1+\epsilon_i\quad\text{if ith car is American}\end{array}\right.$
+
+$\beta_0$ is `r lm.fit$coefficients[1]` and $\beta_1$ is `r lm.fit$coefficients[2]`.
+The predicted mpg for a Japanese car is `r lm.fit2.4$coefficients[1]`, for an American car is `r lm.fit$coefficients2.4[1]+lm.fit2.4$coefficients[2]`, and for an European car is `r lm.fit$coefficients2.4[1]+2*lm.fit2.4$coefficients[2]`
+
+## 2.5
+```{r}
+e1 <- mean(lm.fit2.1$residuals^2)
+e2 <- mean(lm.fit2.2$residuals^2)
+e3 <- mean(lm.fit2.3$residuals^2)
+e4 <- mean(lm.fit2.4$residuals^2)
+```
+The first two results have the same predictions for Japanese, American and European cars average mpg, so that their training squared errors also should be the same but with different coefficient and interpretations and interceptions except the last two which is `r e1`. The training squared errors for the third is `r e3` and for the fourth is `r e4`. The third fit the best. 
+
+## 3.1
+```{r}
+-165.1+4.8*64
+```
+
+## 3.2
+The coefficient estimate $\beta_0^*$ is -165.1 and $\beta_1^*$ is `r 4.8*12`. `r -165.1 + 4.8*64`.
+
+## 3.3
+Because $X_1$ and $X_2$ are highly dependent, $X_1 = X_2 * 12$, either $\beta_1$ or $\beta_2$ can be zero. As long as
+$\beta_1+\beta_2/12 = 4.8$
+
+## 3.4
+The training mean squared erroes in three models should be the same because change unit means there is a linear relationship between two variables which will not affect the model.

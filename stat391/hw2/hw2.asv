@@ -1,0 +1,9 @@
+theta_1 = 0.3141;
+theta_ML = zeros(1,100);
+for i = 1:101
+    choose = 1
+    for j=1:i-1
+        choose = (101 - j)/
+    end
+    theta_ML(i)=theta_1^(i-1)*(1-theta_1)^(101-i)*nchoosek(100,i-1);
+end

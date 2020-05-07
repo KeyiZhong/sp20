@@ -1,0 +1,9 @@
+# Write your answers to task1 below.
+# Do NOT remove or modify the question numbers.
+# Each answer should be kept on a single line.
+
+1.gg
+2.G
+3.50G
+4./chocolate
+5.n
