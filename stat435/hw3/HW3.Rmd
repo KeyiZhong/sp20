@@ -58,7 +58,11 @@ for(i in 1:100) {
 }
 plot(GCV,type='l')
 ```
+
+
 Yes, because GCV score is high with small k, because GCV is basically residual sum, $1-\frac{k}{n}$ is decreasing
+
+
 ##1.5
 ```{r}
 GCV <- rep(0,100)
@@ -68,7 +72,11 @@ for(i in 1:100) {
 }
 plot(GCV,type='l')
 ```
+
+
 No, 3*k close to 100 when k is 33 so it gives highest score. With different degree of freedom, it gives different highest score
+
+
 ##1.6
 ```{r}
 k <- which(GCV==min(GCV[1:30]))
@@ -81,6 +89,21 @@ plot(x,y,main='backward')
 lines(x,fit.values)
 ```
 
+
+##2.1
+
+$\hat{a}=argmin ||y-Xa||^2+\lambda a^T\Omega a$
+$\frac{d}{da}||y-Xa||^2+\lambda a^T\Omega a=0$
+$=\frac{d}{da}a^TX^Ta-a^TX^Ty-y^TXa+y^Ty+\lambda a^T\Omega a$
+$=2X^TXa-2X^Ty+2\lambda\Omega a$
+$=X^TXa-X^Ty+\lambda\Omega a$
+$a=(X^TX+\lambda\Omega)^{-1}X^Ty$
+
+so
+
+$\hat{y}=X(X^TX+\lambda\Omega)^{-1}X^Ty=S_\lambda y$
+
+
 ##2.2
 ```{r}
 library('glmnet')
@@ -90,7 +113,7 @@ coeff <- coef(ridge.mod)
 coeff[101,]=coeff[1,]
 for (i in 1:4) {
   plot(x,y,main = paste0("lambda=",lambda[i]))
-  lines(x,truncated%*%coeff[,i][2:101])
+  lines(x,truncated%*%coeff[,5-i][2:101])
 }
 ```
 
@@ -147,3 +170,4 @@ Increase, it makes the model off the predict model.
 
 ###e
 Not change, irreducible error does not depend on the model
+
